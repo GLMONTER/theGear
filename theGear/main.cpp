@@ -3,8 +3,8 @@
 #include<TlHelp32.h>
 #include"Offsets.hpp""
 
-#define dwLocalPlayer 0xD3DD14
-#define dwEntityList 0x4D5239C
+#define dwLocalPlayer 0xD3ED14
+#define dwEntityList 0x4D533AC
 #define m_dwBoneMatrix 0x26A8
 #define m_iTeamNum 0xF4
 #define m_iHealth 0x100
@@ -162,7 +162,7 @@ int main() {
 	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)FindClosestEnemyThread, NULL, NULL, NULL);
 
 	while (!GetAsyncKeyState(VK_END)) { //press the "end" key to end the hack
-		vm = RPM<view_matrix_t>(moduleBase + 0x4D43CB4);
+		vm = RPM<view_matrix_t>(moduleBase + 0x4D44CC4);
 		Vector3 closestw2shead = WorldToScreen(get_head(GetPlayer(closest)), vm);
 		DrawLine(xhairx, xhairy, closestw2shead.x, closestw2shead.y); //optinal for debugging
 
