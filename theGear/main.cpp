@@ -1,7 +1,7 @@
 #include<iostream>
 #include<Windows.h>
 #include<TlHelp32.h>
-#include"Offsets.hpp""
+#include"Offsets.hpp"
 
 #define dwLocalPlayer 0xD3ED14
 #define dwEntityList 0x4D533AC
@@ -10,6 +10,9 @@
 #define m_iHealth 0x100
 #define m_vecOrigin 0x138
 #define m_bDormant 0xED
+
+#define dwGlowObjectManager 0x529B210
+#define m_iGlowIndex 0xA438
 
 const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2;
 const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2;
@@ -21,7 +24,11 @@ uintptr_t moduleBase;
 HDC hdc;
 int closest; //Used in a thread to save CPU usage.
 
-uintptr_t GetModuleBaseAddress(const char* modName) {
+
+int offsetX, offsetY;
+
+uintptr_t GetModuleBaseAddress(const char* modName)
+{
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
 	if (hSnap != INVALID_HANDLE_VALUE) {
 		MODULEENTRY32 modEntry;
@@ -37,13 +44,51 @@ uintptr_t GetModuleBaseAddress(const char* modName) {
 	}
 }
 
-template<typename T> T RPM(SIZE_T address) {
+
+template<typename T> void WPM(SIZE_T address, T buffer)
+{
+	WriteProcessMemory(hProcess, (LPVOID)address, &buffer, sizeof(buffer), NULL);
+}
+
+struct glowStructEnemy 
+{
+	float red = 1.f;
+	float green = 0.f;
+	float blue = 0.f;
+	float alpha = 1.f;
+	uint8_t padding[8];
+	float unknown = 1.f;
+	uint8_t padding2[4];
+	BYTE renderOccluded = true;
+	BYTE renderUnoccluded = false;
+	BYTE fullBloom = false;
+}glowEnm;
+
+struct glowStructLocal
+{
+	float red = 0.f;
+	float green = 1.f;
+	float blue = 0.f;
+	float alpha = 1.f;
+	uint8_t padding[8];
+	float unknown = 1.f;
+	uint8_t padding2[4];
+	BYTE renderOccluded = true;
+	BYTE renderUnoccluded = false;
+	BYTE fullBloom = false;
+}glowLocal;
+
+
+
+template<typename T> T RPM(SIZE_T address)
+{
 	T buffer;
 	ReadProcessMemory(hProcess, (LPCVOID)address, &buffer, sizeof(T), NULL);
 	return buffer;
 }
 
-class Vector3 {
+class Vector3
+{
 public:
 	float x, y, z;
 	Vector3() : x(0.f), y(0.f), z(0.f) {}
@@ -51,31 +96,38 @@ public:
 };
 
 
-int getTeam(uintptr_t player) {
+int getTeam(uintptr_t player) 
+{
 	return RPM<int>(player + m_iTeamNum);
 }
 
-uintptr_t GetLocalPlayer() {
+uintptr_t GetLocalPlayer()
+{
 	return RPM< uintptr_t>(moduleBase + dwLocalPlayer);
 }
 
-uintptr_t GetPlayer(int index) {  //Each player has an index. 1-64
+uintptr_t GetPlayer(int index) 
+{  //Each player has an index. 1-64
 	return RPM< uintptr_t>(moduleBase + dwEntityList + index * 0x10); //We multiply the index by 0x10 to select the player we want in the entity list.
 }
 
-int GetPlayerHealth(uintptr_t player) {
+int GetPlayerHealth(uintptr_t player) 
+{
 	return RPM<int>(player + m_iHealth);
 }
 
-Vector3 PlayerLocation(uintptr_t player) { //Stores XYZ coordinates in a Vector3.
+Vector3 PlayerLocation(uintptr_t player) 
+{ //Stores XYZ coordinates in a Vector3.
 	return RPM<Vector3>(player + m_vecOrigin);
 }
 
-bool DormantCheck(uintptr_t player) {
+bool DormantCheck(uintptr_t player)
+{
 	return RPM<int>(player + m_bDormant);
 }
 
-Vector3 get_head(uintptr_t player) {
+Vector3 get_head(uintptr_t player) 
+{
 	struct boneMatrix_t {
 		byte pad3[12];
 		float x;
@@ -89,11 +141,13 @@ Vector3 get_head(uintptr_t player) {
 	return Vector3(boneMatrix.x, boneMatrix.y, boneMatrix.z);
 }
 
-struct view_matrix_t {
+struct view_matrix_t 
+{
 	float matrix[16];
 } vm;
 
-struct Vector3 WorldToScreen(const struct Vector3 pos, struct view_matrix_t matrix) { //This turns 3D coordinates (ex: XYZ) int 2D coordinates (ex: XY).
+struct Vector3 WorldToScreen(const struct Vector3 pos, struct view_matrix_t matrix) 
+{ //This turns 3D coordinates (ex: XYZ) int 2D coordinates (ex: XY).
 	struct Vector3 out;
 	float _x = matrix.matrix[0] * pos.x + matrix.matrix[1] * pos.y + matrix.matrix[2] * pos.z + matrix.matrix[3];
 	float _y = matrix.matrix[4] * pos.x + matrix.matrix[5] * pos.y + matrix.matrix[6] * pos.z + matrix.matrix[7];
@@ -111,17 +165,20 @@ struct Vector3 WorldToScreen(const struct Vector3 pos, struct view_matrix_t matr
 	return out;
 }
 
-float pythag(int x1, int y1, int x2, int y2) {
+float pythag(int x1, int y1, int x2, int y2)
+{
 	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
-int FindClosestEnemy() {
+int FindClosestEnemy() 
+{
 	float Finish;
 	int ClosestEntity = 1;
 	Vector3 Calc = { 0, 0, 0 };
 	float Closest = FLT_MAX;
 	int localTeam = getTeam(GetLocalPlayer());
-	for (int i = 1; i < 64; i++) { //Loops through all the entitys in the index 1-64.
+	for (int i = 1; i < 64; i++)
+	{ //Loops through all the entitys in the index 1-64.
 		DWORD Entity = GetPlayer(i);
 		int EnmTeam = getTeam(Entity); if (EnmTeam == localTeam) continue;
 		int EnmHealth = GetPlayerHealth(Entity); if (EnmHealth < 1 || EnmHealth > 100) continue;
@@ -137,7 +194,8 @@ int FindClosestEnemy() {
 	return ClosestEntity;
 }
 
-void DrawLine(float StartX, float StartY, float EndX, float EndY) { //This function is optional for debugging.
+void DrawLine(float StartX, float StartY, float EndX, float EndY)
+{ //This function is optional for debugging.
 	int a, b = 0;
 	HPEN hOPen;
 	HPEN hNPen = CreatePen(PS_SOLID, 2, 0x0000FF /*red*/);
@@ -147,13 +205,22 @@ void DrawLine(float StartX, float StartY, float EndX, float EndY) { //This funct
 	DeleteObject(SelectObject(hdc, hOPen));
 }
 
-void FindClosestEnemyThread() {
+void FindClosestEnemyThread() 
+{
 	while (1) {
 		closest = FindClosestEnemy();
 	}
 }
-
-int main() {
+void resetOffsets()
+{
+	system("CLS");
+	std::cout << "Enter X offset." << std::endl;
+	std::cin >> offsetX;
+	std::cout << "Enter Y offset." << std::endl;
+	std::cin >> offsetY;
+}
+int main() 
+{
 	hwnd = FindWindowA(NULL, "Counter-Strike: Global Offensive");
 	GetWindowThreadProcessId(hwnd, &procId);
 	moduleBase = GetModuleBaseAddress("client.dll");
@@ -161,12 +228,33 @@ int main() {
 	hdc = GetDC(hwnd);
 	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)FindClosestEnemyThread, NULL, NULL, NULL);
 
+
+	resetOffsets();
+
 	while (!GetAsyncKeyState(VK_END)) { //press the "end" key to end the hack
 		vm = RPM<view_matrix_t>(moduleBase + 0x4D44CC4);
 		Vector3 closestw2shead = WorldToScreen(get_head(GetPlayer(closest)), vm);
 		DrawLine(xhairx, xhairy, closestw2shead.x, closestw2shead.y); //optinal for debugging
 
 		if (GetAsyncKeyState(VK_MENU /*alt key*/) && closestw2shead.z >= 0.001f /*onscreen check*/)
-			SetCursorPos(closestw2shead.x - 0, closestw2shead.y - 0); //turn off "raw input" in CSGO settings
+			SetCursorPos(closestw2shead.x - offsetX, closestw2shead.y - offsetY); //turn off "raw input" in CSGO settings
+
+		if (GetAsyncKeyState(VK_DELETE))
+			resetOffsets();
+
+		if (GetAsyncKeyState(0x43))
+		{
+			uintptr_t dwGlowManager = RPM<uintptr_t>(moduleBase + dwGlowObjectManager);
+			int LocalTeam = RPM<int>(GetLocalPlayer() + m_iTeamNum);
+			for (int i = 1; i < 32; i++) {
+				uintptr_t dwEntity = RPM<uintptr_t>(moduleBase + dwEntityList + i * 0x10);
+				int iGlowIndx = RPM<int>(dwEntity + m_iGlowIndex);
+				int EnmHealth = RPM<int>(dwEntity + m_iHealth); if (EnmHealth < 1 || EnmHealth > 100) continue;
+				int Dormant = RPM<int>(dwEntity + m_bDormant); if (Dormant) continue;
+				int EntityTeam = RPM<int>(dwEntity + m_iTeamNum);
+
+				WPM<glowStructEnemy>(dwGlowManager + (iGlowIndx * 0x38) + 0x4, glowEnm);
+			}
+		}
 	}
 }
