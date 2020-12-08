@@ -45,11 +45,6 @@ uintptr_t GetModuleBaseAddress(const char* modName)
 }
 
 
-template<typename T> void WPM(SIZE_T address, T buffer)
-{
-	WriteProcessMemory(hProcess, (LPVOID)address, &buffer, sizeof(buffer), NULL);
-}
-
 struct glowStructEnemy 
 {
 	float red = 1.f;
@@ -85,6 +80,10 @@ template<typename T> T RPM(SIZE_T address)
 	T buffer;
 	ReadProcessMemory(hProcess, (LPCVOID)address, &buffer, sizeof(T), NULL);
 	return buffer;
+}
+template<typename T> void WPM(SIZE_T address, T buffer)
+{
+        WriteProcessMemory(hProcess, (LPVOID)address, &buffer, sizeof(buffer), NULL);
 }
 
 class Vector3

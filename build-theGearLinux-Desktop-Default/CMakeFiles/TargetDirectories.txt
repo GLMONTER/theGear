@@ -1,0 +1,3 @@
+/home/monter/Documents/theGear/build-theGearLinux-Desktop-Default/CMakeFiles/rebuild_cache.dir
+/home/monter/Documents/theGear/build-theGearLinux-Desktop-Default/CMakeFiles/theGearLinux.dir
+/home/monter/Documents/theGear/build-theGearLinux-Desktop-Default/CMakeFiles/edit_cache.dir

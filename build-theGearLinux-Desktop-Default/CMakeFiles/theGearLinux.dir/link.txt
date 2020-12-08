@@ -1,0 +1,1 @@
+/usr/bin/clang++    -rdynamic CMakeFiles/theGearLinux.dir/main.cpp.o  -o theGearLinux 
