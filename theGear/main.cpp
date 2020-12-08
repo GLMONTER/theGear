@@ -4,14 +4,14 @@
 #include"Offsets.hpp"
 
 #define dwLocalPlayer 0xD8722C
-#define dwEntityList 0x4D9EA54
+#define dwEntityList 0x4D9EA44
 #define m_dwBoneMatrix 0x26A8
 #define m_iTeamNum 0xF4
 #define m_iHealth 0x100
 #define m_vecOrigin 0x138
 #define m_bDormant 0xED
 
-#define dwGlowObjectManager 0x52E7040
+#define dwGlowObjectManager 0x52E7038
 #define m_iGlowIndex 0xA438
 
 const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2;
@@ -231,7 +231,7 @@ int main()
 	resetOffsets();
 
 	while (!GetAsyncKeyState(VK_END)) { //press the "end" key to end the hack
-		vm = RPM<view_matrix_t>(moduleBase + 0x4D90354);
+		vm = RPM<view_matrix_t>(moduleBase + 0x4D90344);
 		Vector3 closestw2shead = WorldToScreen(get_head(GetPlayer(closest)), vm);
 		DrawLine(xhairx, xhairy, closestw2shead.x, closestw2shead.y); //optinal for debugging
 
