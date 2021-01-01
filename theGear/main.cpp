@@ -1,18 +1,24 @@
 #include<iostream>
 #include<Windows.h>
 #include<TlHelp32.h>
-#include"Offsets.hpp"
+//#include"Offsets.hpp"
+#include<fstream>
+#include<exception>
+#include<string>
+#include<vector>
+#include<iterator>
 
-#define dwLocalPlayer 0xD8722C
-#define dwEntityList 0x4D9EA44
-#define m_dwBoneMatrix 0x26A8
-#define m_iTeamNum 0xF4
-#define m_iHealth 0x100
-#define m_vecOrigin 0x138
-#define m_bDormant 0xED
+int dwLocalPlayer;
+int dwEntityList;
+int m_dwBoneMatrix;
+int dwViewMatrix;
+int m_iTeamNum;
+int m_iHealth;
+int m_vecOrigin;
+int m_bDormant;
 
-#define dwGlowObjectManager 0x52E7038
-#define m_iGlowIndex 0xA438
+int dwGlowObjectManager;
+int m_iGlowIndex;
 
 const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN); const int xhairx = SCREEN_WIDTH / 2;
 const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); const int xhairy = SCREEN_HEIGHT / 2;
@@ -23,9 +29,83 @@ HANDLE hProcess;
 uintptr_t moduleBase;
 HDC hdc;
 int closest; //Used in a thread to save CPU usage.
+std::vector<int> hexValues;
 
+void setOffsets()
+{
+	m_dwBoneMatrix = hexValues[0];
+	m_iGlowIndex = hexValues[1];
+	m_iHealth = hexValues[2];
+	m_iTeamNum = hexValues[3];
+	m_vecOrigin = hexValues[4];
+	dwEntityList = hexValues[5];
+	dwGlowObjectManager = hexValues[6];
+	dwLocalPlayer = hexValues[7];
+	dwViewMatrix = hexValues[8];
+	m_bDormant = hexValues[9];
+}
 
 int offsetX, offsetY;
+
+void clense(std::string& toClense)
+{
+	for (std::string::iterator i = toClense.begin(); i != toClense.end(); i++)
+	{
+		if (*i == ';' || *i == ' ')
+		{
+			toClense.erase(i);
+			i = toClense.begin();
+			continue;
+		}
+	}
+}
+
+//the offsets that are needed to load
+std::vector<std::string> stringsToLoad{ "dwLocalPlayer", "dwEntityList", "dwViewMatrix", "m_dwBoneMatrix", "m_iTeamNum",
+"m_iHealth", "m_vecOrigin", "m_bDormant", "dwGlowObjectManager", "m_iGlowIndex"};
+
+//load generated offset file and get the updated hex values
+void getNewOffsets()
+{
+	std::ifstream inputFile("csgo.hpp");
+	std::string line;
+	std::string stringToLoadUsed;
+
+	//iterate through hpp line by line
+	while (std::getline(inputFile, line))
+	{
+		//iterate through line in file to check for anything in stringsToLoad
+		for (std::vector<std::string>::iterator s = stringsToLoad.begin(); s != stringsToLoad.end(); s++)
+		{
+			size_t pos = line.find(*s);
+			//if found a string we need to load
+			if (pos != std::string::npos)
+			{
+				stringToLoadUsed = *s;
+
+				//finding the position in the line where we want to start loading, after the = sign and space
+				for (size_t t = pos; t != line.size(); t++)
+				{
+					if (line[t] == '=')
+					{
+						pos = t + 1;
+					}
+				}
+				//load the new hex value at the right position
+				std::string hexConstruct;
+				for (size_t t = pos; t != line.size(); t++)
+				{
+					hexConstruct += line[t];
+				}
+				//get rid of anything but the hex value like semicolens
+				clense(hexConstruct);
+				hexValues.push_back(strtoul(hexConstruct.c_str(), NULL, 16));
+				break;
+			}
+		}
+	}
+	setOffsets();
+}
 
 uintptr_t GetModuleBaseAddress(const char* modName)
 {
@@ -193,23 +273,14 @@ int FindClosestEnemy()
 	return ClosestEntity;
 }
 
-void DrawLine(float StartX, float StartY, float EndX, float EndY)
-{ //This function is optional for debugging.
-	int a, b = 0;
-	HPEN hOPen;
-	HPEN hNPen = CreatePen(PS_SOLID, 2, 0x0000FF /*red*/);
-	hOPen = (HPEN)SelectObject(hdc, hNPen);
-	MoveToEx(hdc, StartX, StartY, NULL); //start of line
-	a = LineTo(hdc, EndX, EndY); //end of line
-	DeleteObject(SelectObject(hdc, hOPen));
-}
-
 void FindClosestEnemyThread() 
 {
-	while (1) {
+	while (1) 
+	{
 		closest = FindClosestEnemy();
 	}
 }
+//function to obtain crosshair offsets from user
 void resetOffsets()
 {
 	system("CLS");
@@ -217,9 +288,20 @@ void resetOffsets()
 	std::cin >> offsetX;
 	std::cout << "Enter Y offset." << std::endl;
 	std::cin >> offsetY;
+
+	std::ofstream cOffsets("crosshairOffsets.txt");
+	cOffsets << offsetX << "\n";
+	cOffsets << offsetY;
+	cOffsets.close();
 }
 int main() 
 {
+	//call hazedumper to get new offsets
+	system("haze.exe");
+
+	std::cout << std::endl << "Press the delete key to reset crosshair offsets." << std::endl;
+	getNewOffsets();
+
 	hwnd = FindWindowA(NULL, "Counter-Strike: Global Offensive");
 	GetWindowThreadProcessId(hwnd, &procId);
 	moduleBase = GetModuleBaseAddress("client.dll");
@@ -227,20 +309,40 @@ int main()
 	hdc = GetDC(hwnd);
 	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)FindClosestEnemyThread, NULL, NULL, NULL);
 
-
-	resetOffsets();
+	//try to load crosshair offset config, if the file is found use the config of not then ask for offsets
+	std::ifstream cOffsets("crosshairOffsets.txt");
+	if(!cOffsets)
+		resetOffsets();
+	else
+	{
+		std::string tempString;
+		while (std::getline(cOffsets, tempString))
+		{
+			static int i = 0;
+			if(i == 0)
+				offsetX = std::stoi(tempString);
+			else
+			{
+				offsetY = std::stoi(tempString);
+				break;
+			}
+			i++;
+		}
+	}
 
 	while (!GetAsyncKeyState(VK_END)) { //press the "end" key to end the hack
-		vm = RPM<view_matrix_t>(moduleBase + 0x4D90344);
+		vm = RPM<view_matrix_t>(moduleBase + dwViewMatrix);
 		Vector3 closestw2shead = WorldToScreen(get_head(GetPlayer(closest)), vm);
-		DrawLine(xhairx, xhairy, closestw2shead.x, closestw2shead.y); //optinal for debugging
-
 		if (GetAsyncKeyState(VK_MENU /*alt key*/) && closestw2shead.z >= 0.001f /*onscreen check*/)
+		{
 			SetCursorPos(closestw2shead.x - offsetX, closestw2shead.y - offsetY); //turn off "raw input" in CSGO settings
+		}
 
+		//press the delete key to reset crosshair offsets
 		if (GetAsyncKeyState(VK_DELETE))
 			resetOffsets();
 
+		//if get 'C' key use walls
 		if (GetAsyncKeyState(0x43))
 		{
 			uintptr_t dwGlowManager = RPM<uintptr_t>(moduleBase + dwGlowObjectManager);

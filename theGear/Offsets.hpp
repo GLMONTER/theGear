@@ -1,3 +1,4 @@
+/*
 #pragma once
 
  #define cs_gamerules_data = 0x0;
@@ -143,3 +144,4 @@
  #define model_ambient_min = 0x59105C;
  #define set_abs_angles = 0x1E04E0;
  #define set_abs_origin = 0x1E0320;
+ */

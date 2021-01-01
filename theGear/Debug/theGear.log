@@ -1,39 +1,20 @@
 ﻿  main.cpp
-C:\Users\logis\Documents\theGear\theGear\main.cpp(4,9): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\logis\Documents\theGear\theGear\main.cpp(6,1): warning C4005: 'dwLocalPlayer': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(119): message : see previous definition of 'dwLocalPlayer'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(7,1): warning C4005: 'dwEntityList': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(104): message : see previous definition of 'dwEntityList'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(8,1): warning C4005: 'm_dwBoneMatrix': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(34): message : see previous definition of 'm_dwBoneMatrix'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(9,1): warning C4005: 'm_iTeamNum': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(73): message : see previous definition of 'm_iTeamNum'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(10,1): warning C4005: 'm_iHealth': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(66): message : see previous definition of 'm_iHealth'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(11,1): warning C4005: 'm_vecOrigin': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(84): message : see previous definition of 'm_vecOrigin'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(12,1): warning C4005: 'm_bDormant': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(138): message : see previous definition of 'm_bDormant'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(14,1): warning C4005: 'dwGlowObjectManager': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(116): message : see previous definition of 'dwGlowObjectManager'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(15,1): warning C4005: 'm_iGlowIndex': macro redefinition
-C:\Users\logis\Documents\theGear\theGear\Offsets.hpp(65): message : see previous definition of 'm_iGlowIndex'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(132,29): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(82): message : see declaration of 'Vector3'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(132,54): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(132): message : see declaration of 'Vector3'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(133,20): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(132): message : see declaration of 'Vector3'
-C:\Users\logis\Documents\theGear\theGear\main.cpp(151,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(166,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(166,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(181,24): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(181,16): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(182,24): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(182,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(203,20): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(203,12): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(206,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(206,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\logis\Documents\theGear\theGear\main.cpp(41): warning C4715: 'GetModuleBaseAddress': not all control paths return a value
-  theGear.vcxproj -> C:\Users\logis\Documents\theGear\Debug\theGear.exe
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(220,29): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(161): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(220,54): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(220): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(222,20): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(220): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(241,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(258,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(258,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(274,24): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(274,16): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(275,24): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(275,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(332,20): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(332,12): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(335,62): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(335,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(117): warning C4715: 'GetModuleBaseAddress': not all control paths return a value
+  theGear.vcxproj -> C:\Users\MONTER\Documents\theGear\Debug\theGear.exe
