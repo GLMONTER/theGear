@@ -1,18 +1,19 @@
 ﻿  main.cpp
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(228,29): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(169): message : see declaration of 'Vector3'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(228,54): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(228): message : see declaration of 'Vector3'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(230,20): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(228): message : see declaration of 'Vector3'
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(249,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(266,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(266,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(338,62): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\MONTER\Documents\theGear\theGear\main.cpp(338,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(235,29): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(176): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(235,54): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(235): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(237,20): warning C4099: 'Vector3': type name first seen using 'class' now seen using 'struct'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(235): message : see declaration of 'Vector3'
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(256,13): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(273,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(273,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(345,62): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(345,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Generating code
-  10 of 328 functions ( 3.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+C:\Users\MONTER\Documents\theGear\theGear\main.cpp(132): warning C4715: 'GetModuleBaseAddress': not all control paths return a value
+  15 of 329 functions ( 4.6%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   theGear.vcxproj -> C:\Users\MONTER\Documents\theGear\Release\theGear.exe

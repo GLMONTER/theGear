@@ -1,16 +1,18 @@
 #include<iostream>
-#include<Windows.h>
-#include<TlHelp32.h>
-//#include"Offsets.hpp"
 #include<fstream>
 #include<exception>
 #include<string>
 #include<vector>
 #include<iterator>
 
+#include<Windows.h>
+#include<TlHelp32.h>
+
 int dwLocalPlayer;
 int dwEntityList;
+int dwForceJump;
 int m_dwBoneMatrix;
+int m_fFlags;
 int dwViewMatrix;
 int m_iTeamNum;
 int m_iHealth;
@@ -34,15 +36,17 @@ std::vector<int> hexValues;
 void setOffsets()
 {
 	m_dwBoneMatrix = hexValues[0];
-	m_iGlowIndex = hexValues[1];
-	m_iHealth = hexValues[2];
-	m_iTeamNum = hexValues[3];
-	m_vecOrigin = hexValues[4];
-	dwEntityList = hexValues[5];
-	dwGlowObjectManager = hexValues[6];
-	dwLocalPlayer = hexValues[7];
-	dwViewMatrix = hexValues[8];
-	m_bDormant = hexValues[9];
+	m_fFlags = hexValues[1];
+	m_iGlowIndex = hexValues[2];
+	m_iHealth = hexValues[3];
+	m_iTeamNum = hexValues[4];
+	m_vecOrigin = hexValues[5];
+	dwEntityList = hexValues[6];
+	dwForceJump = hexValues[7];
+	dwGlowObjectManager = hexValues[8];
+	dwLocalPlayer = hexValues[9];
+	dwViewMatrix = hexValues[10];
+	m_bDormant = hexValues[11];
 }
 
 int offsetX, offsetY;
@@ -61,7 +65,7 @@ void clense(std::string& toClense)
 }
 
 //the offsets that are needed to load
-std::vector<std::string> stringsToLoad{ "dwLocalPlayer", "dwEntityList", "dwViewMatrix", "m_dwBoneMatrix", "m_iTeamNum",
+std::vector<std::string> stringsToLoad{"dwForceJump", "m_fFlags", "dwLocalPlayer", "dwEntityList", "dwViewMatrix", "m_dwBoneMatrix", "m_iTeamNum",
 "m_iHealth", "m_vecOrigin", "m_bDormant", "dwGlowObjectManager", "m_iGlowIndex"};
 
 //load generated offset file and get the updated hex values
@@ -113,9 +117,12 @@ uintptr_t GetModuleBaseAddress(const char* modName)
 	if (hSnap != INVALID_HANDLE_VALUE) {
 		MODULEENTRY32 modEntry;
 		modEntry.dwSize = sizeof(modEntry);
-		if (Module32First(hSnap, &modEntry)) {
-			do {
-				if (!strcmp((const char*)modEntry.szModule, modName)) {
+		if (Module32First(hSnap, &modEntry)) 
+		{
+			do 
+			{
+				if (!strcmp((const char*)modEntry.szModule, modName)) 
+				{
 					CloseHandle(hSnap);
 					return (uintptr_t)modEntry.modBaseAddr;
 				}
@@ -163,7 +170,7 @@ template<typename T> T RPM(SIZE_T address)
 }
 template<typename T> void WPM(SIZE_T address, T buffer)
 {
-        WriteProcessMemory(hProcess, (LPVOID)address, &buffer, sizeof(buffer), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)address, &buffer, sizeof(buffer), NULL);
 }
 
 class Vector3
@@ -329,7 +336,7 @@ int main()
 			i++;
 		}
 	}
-
+	uintptr_t buffer;
 	while (!GetAsyncKeyState(VK_END)) { //press the "end" key to end the hack
 		vm = RPM<view_matrix_t>(moduleBase + dwViewMatrix);
 		Vector3 closestw2shead = WorldToScreen(get_head(GetPlayer(closest)), vm);
@@ -356,6 +363,16 @@ int main()
 
 				WPM<glowStructEnemy>(dwGlowManager + (iGlowIndx * 0x38) + 0x4, glowEnm);
 			}
+		}
+		uintptr_t localPlayer = RPM<uintptr_t>(moduleBase + dwEntityList);
+		int flags = RPM<int>(localPlayer + m_fFlags);
+		if (flags & 1)
+			buffer = 5;
+		else
+			buffer = 4;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			WPM(moduleBase + dwForceJump, buffer);
 		}
 	}
 }
